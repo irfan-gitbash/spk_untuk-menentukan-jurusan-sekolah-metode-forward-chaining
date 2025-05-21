@@ -69,7 +69,7 @@ include 'includes/header.php';
                 <div class="alert alert-info mt-4">
                     <h5>Referensi</h5>
                     <p>
-                        Sistem ini dibuat berdasarkan referensi dari berbagai sumber, termasuk video tutorial dari YouTube: <a href="https://www.youtube.com/watch?v=Dyk3RIfg2RE" target="_blank">Sistem Pengambilan Keputusan untuk menentukan Jurusan dengan metode Forward Chaining</a>
+                        Sistem ini dibuat berdasarkan tugas akhir skripsi serta berjudul >Sistem Pendukung Keputusan untuk menentukan Jurusan sma dan smk dengan metode Forward Chaining</a>
                     </p>
                 </div>
             </div>

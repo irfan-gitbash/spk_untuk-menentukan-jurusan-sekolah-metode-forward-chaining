@@ -1,0 +1,17 @@
+{
+  "name": "spk-sekolah",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "deploy:vercel": "vercel",
+    "deploy:netlify": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "netlify-cli": "^17.0.1",
+    "vercel": "^32.3.1"
+  },
+  "devDependencies": {
+    "fs-extra": "^11.3.0"
+  }
+}

@@ -1,0 +1,169 @@
+:root {
+  --primary-color: #17a2b8;
+  --primary-dark: #138496;
+}
+
+/* Light theme (default) */
+[data-bs-theme="light"] {
+  --bg-color: #f8f9fa;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --border-color: rgba(0, 0, 0, 0.125);
+  --navbar-bg: var(--primary-color);
+  --navbar-color: #ffffff;
+  --jumbotron-bg: var(--primary-color);
+  --jumbotron-color: #ffffff;
+}
+
+/* Dark theme */
+[data-bs-theme="dark"] {
+  --bg-color: #212529;
+  --text-color: #f8f9fa;
+  --card-bg: #343a40;
+  --border-color: rgba(255, 255, 255, 0.125);
+  --navbar-bg: #343a40;
+  --navbar-color: #ffffff;
+  --jumbotron-bg: #343a40;
+  --jumbotron-color: #ffffff;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: var(--navbar-bg);
+  padding: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-brand,
+.nav-link {
+  color: var(--navbar-color) !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Jumbotron Styles */
+.jumbotron {
+  background-color: var(--jumbotron-bg);
+  color: var(--jumbotron-color);
+  padding: 3rem 1rem;
+  border-radius: 0;
+  margin-bottom: 2rem;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .jumbotron {
+    padding: 2rem 1rem;
+  }
+}
+
+/* Card Styles */
+.card {
+  margin-bottom: 20px;
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-header {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Feature Cards */
+.feature-card {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .row {
+    margin: 0 -15px;
+  }
+
+  [class*="col-"] {
+    padding: 0 15px;
+  }
+
+  .card {
+    margin-bottom: 15px;
+  }
+}
+
+/* Form Styles */
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  padding: 2rem 0;
+}
+
+@media (max-width: 576px) {
+  .main-content {
+    padding: 1rem 0;
+  }
+}
