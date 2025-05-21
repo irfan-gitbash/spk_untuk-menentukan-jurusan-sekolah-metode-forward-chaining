@@ -15,7 +15,7 @@
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*).html", "dest": "/$1.html" }
   ],
-  "env": {
+   "env": {
     "MYSQL_HOST": "localhost",
     "MYSQL_USER": "root",
     "MYSQL_PASSWORD": "root",
