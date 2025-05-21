@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konsultasi - SPK Jurusan SMA dan SMK</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="assets/style.css" />
+    <script src="assets/js/theme.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <i class="fas fa-graduation-cap me-2"></i>
+          Sistem Pendukung Keputusan
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">
+                <i class="fas fa-home me-1"></i> Beranda
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="konsultasi.html">
+                <i class="fas fa-comments me-1"></i> Konsultasi
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="jurusan.html">
+                <i class="fas fa-book me-1"></i> Jurusan
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="tentang.html">
+                <i class="fas fa-info-circle me-1"></i> Tentang
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="hasiloutput.html">
+                <i class="fas fa-chart-bar me-1"></i> Data Hasil
+              </a>
+            </li>
+            <li class="nav-item ms-3">
+              <button
+                id="theme-toggle"
+                class="btn btn-link nav-link p-0"
+                aria-label="Toggle theme"
+              >
+                <i class="fas fa-moon"></i>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <div class="container mt-4">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card shadow-sm">
+              <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                  <i class="fas fa-comments me-2"></i>Konsultasi Pemilihan
+                  Jurusan
+                </h4>
+              </div>
+              <div class="card-body">
+                <form id="konsultasiForm" class="needs-validation" novalidate>
+                  <div class="mb-4">
+                    <label for="nama" class="form-label">Nama Lengkap</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nama"
+                      name="nama"
+                      required
+                    />
+                  </div>
+                  <div class="mb-4">
+                    <label for="sekolah" class="form-label">Asal Sekolah</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="sekolah"
+                      name="sekolah"
+                      required
+                    />
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label d-block">Minat Akademik</label>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="minatSains"
+                        name="minat[]"
+                        value="sains"
+                      />
+                      <label class="form-check-label" for="minatSains"
+                        >Sains dan Matematika</label
+                      >
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="minatSosial"
+                        name="minat[]"
+                        value="sosial"
+                      />
+                      <label class="form-check-label" for="minatSosial"
+                        >Ilmu Sosial</label
+                      >
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="minatBahasa"
+                        name="minat[]"
+                        value="bahasa"
+                      />
+                      <label class="form-check-label" for="minatBahasa"
+                        >Bahasa dan Sastra</label
+                      >
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label d-block"
+                      >Nilai Akademik Tertinggi</label
+                    >
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        id="nilaiSains"
+                        name="nilai"
+                        value="sains"
+                        required
+                      />
+                      <label class="form-check-label" for="nilaiSains"
+                        >Matematika/IPA</label
+                      >
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        id="nilaiSosial"
+                        name="nilai"
+                        value="sosial"
+                      />
+                      <label class="form-check-label" for="nilaiSosial"
+                        >IPS</label
+                      >
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        id="nilaiBahasa"
+                        name="nilai"
+                        value="bahasa"
+                      />
+                      <label class="form-check-label" for="nilaiBahasa"
+                        >Bahasa</label
+                      >
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-paper-plane me-2"></i>Kirim Konsultasi
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document
+        .getElementById("konsultasiForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          try {
+            const response = await fetch("/api/konsultasi", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(Object.fromEntries(formData)),
+            });
+            if (response.ok) {
+              const result = await response.json();
+              window.location.href = `hasiloutput.html?id=${result.id}`;
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Terjadi kesalahan. Silakan coba lagi.");
+          }
+        });
+    </script>
+  </body>
+</html>
