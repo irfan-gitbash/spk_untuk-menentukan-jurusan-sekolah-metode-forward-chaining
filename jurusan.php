@@ -15,71 +15,115 @@ foreach ($all_jurusan as $jurusan) {
 }
 ?>
 
-<div class="container-fluid px-3 py-4">
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <h2 class="text-center mb-4">Daftar Jurusan</h2>
-            
-            <ul class="nav nav-pills nav-fill mb-4 gap-2" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active px-4 py-2" id="sma-tab" data-bs-toggle="tab" data-bs-target="#sma" type="button" role="tab" aria-controls="sma" aria-selected="true">
-                        <i class="fas fa-school me-2"></i>SMA
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link px-4 py-2" id="smk-tab" data-bs-toggle="tab" data-bs-target="#smk" type="button" role="tab" aria-controls="smk" aria-selected="false">
-                        <i class="fas fa-tools me-2"></i>SMK
-                    </button>
-                </li>
-            </ul>
-            
-            <div class="tab-content" id="myTabContent">
-                <!-- Tab SMA -->
-                <div class="tab-pane fade show active" id="sma" role="tabpanel" aria-labelledby="sma-tab">
-                    <div class="row g-3">
-                        <?php foreach ($jurusan_sma as $jurusan): ?>
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <div class="card h-100 shadow-sm">
-                                    <div class="card-header bg-primary text-white py-2">
-                                        <h5 class="mb-0 fs-6"><?php echo $jurusan['nama_jurusan']; ?></h5>
-                                    </div>
-                                    <div class="card-body p-3">
-                                        <p class="small mb-3"><?php echo $jurusan['deskripsi']; ?></p>
-                                        <div class="border-top pt-2">
-                                            <h6 class="fw-bold small mb-2">Prospek Karir:</h6>
-                                            <p class="small mb-0 text-muted"><?php echo $jurusan['prospek_karir']; ?></p>
-                                        </div>
-                                    </div>
-                                </div>
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-6 py-12">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Daftar Jurusan</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                Temukan informasi lengkap tentang berbagai jurusan di SMA dan SMK beserta prospek karir masa depan.
+            </p>
+        </div>
+
+        <!-- Tab Buttons -->
+        <div class="flex justify-center space-x-4 mb-12">
+            <button class="tab-btn active px-8 py-3 rounded-xl bg-primary text-white font-semibold transition duration-200 hover:bg-secondary flex items-center space-x-2" data-tab="sma">
+                <i class="fas fa-school"></i>
+                <span>SMA</span>
+            </button>
+            <button class="tab-btn px-8 py-3 rounded-xl bg-gray-200 text-gray-700 font-semibold transition duration-200 hover:bg-gray-300 flex items-center space-x-2" data-tab="smk">
+                <i class="fas fa-tools"></i>
+                <span>SMK</span>
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- SMA Section -->
+            <div id="sma" class="tab-pane active">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <?php foreach ($jurusan_sma as $jurusan): ?>
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+                        <div class="bg-primary/10 p-6">
+                            <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-graduation-cap text-primary text-xl"></i>
                             </div>
-                        <?php endforeach; ?>
+                            <h3 class="text-xl font-bold text-gray-900"><?php echo $jurusan['nama_jurusan']; ?></h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-6"><?php echo $jurusan['deskripsi']; ?></p>
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <i class="fas fa-briefcase text-primary mr-2"></i>
+                                    Prospek Karir
+                                </h4>
+                                <p class="text-gray-600 pl-6"><?php echo $jurusan['prospek_karir']; ?></p>
+                            </div>
+                        </div>
                     </div>
+                    <?php endforeach; ?>
                 </div>
-                
-                <!-- Tab SMK -->
-                <div class="tab-pane fade" id="smk" role="tabpanel" aria-labelledby="smk-tab">
-                    <div class="row g-3">
-                        <?php foreach ($jurusan_smk as $jurusan): ?>
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <div class="card h-100 shadow-sm">
-                                    <div class="card-header bg-primary text-white py-2">
-                                        <h5 class="mb-0 fs-6"><?php echo $jurusan['nama_jurusan']; ?></h5>
-                                    </div>
-                                    <div class="card-body p-3">
-                                        <p class="small mb-3"><?php echo $jurusan['deskripsi']; ?></p>
-                                        <div class="border-top pt-2">
-                                            <h6 class="fw-bold small mb-2">Prospek Karir:</h6>
-                                            <p class="small mb-0 text-muted"><?php echo $jurusan['prospek_karir']; ?></p>
-                                        </div>
-                                    </div>
-                                </div>
+            </div>
+
+            <!-- SMK Section -->
+            <div id="smk" class="tab-pane hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <?php foreach ($jurusan_smk as $jurusan): ?>
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+                        <div class="bg-primary/10 p-6">
+                            <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-cog text-primary text-xl"></i>
                             </div>
-                        <?php endforeach; ?>
+                            <h3 class="text-xl font-bold text-gray-900"><?php echo $jurusan['nama_jurusan']; ?></h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-6"><?php echo $jurusan['deskripsi']; ?></p>
+                            <div class="space-y-4">
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    <i class="fas fa-briefcase text-primary mr-2"></i>
+                                    Prospek Karir
+                                </h4>
+                                <p class="text-gray-600 pl-6"><?php echo $jurusan['prospek_karir']; ?></p>
+                            </div>
+                        </div>
                     </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            // Remove active classes
+            tabBtns.forEach(b => {
+                b.classList.remove('active', 'bg-primary', 'text-white');
+                b.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            tabPanes.forEach(pane => {
+                pane.classList.add('hidden');
+                pane.classList.remove('active');
+            });
+            
+            // Add active classes
+            this.classList.add('active', 'bg-primary', 'text-white');
+            this.classList.remove('bg-gray-200', 'text-gray-700');
+            
+            const activePane = document.getElementById(tabId);
+            activePane.classList.remove('hidden');
+            activePane.classList.add('active');
+        });
+    });
+});
+</script>
 
 <?php include 'includes/footer.php'; ?>

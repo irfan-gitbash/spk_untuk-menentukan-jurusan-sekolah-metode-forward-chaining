@@ -4,244 +4,436 @@ require_once 'includes/functions.php';
 $jenis_sekolah = isset($_GET['jenis_sekolah']) ? $_GET['jenis_sekolah'] : '';
 $semua_hasil = getAllHasilKonsultasi($jenis_sekolah);
 
+// Hitung total pertanyaan per kecerdasan untuk menghitung persentase akurasi
+function hitungTotalPertanyaanPerKecerdasan() {
+    global $conn;
+    $query = "SELECT id_kecerdasan, COUNT(*) as total FROM pertanyaan GROUP BY id_kecerdasan";
+    $result = mysqli_query($conn, $query);
+    $total_pertanyaan = [];
+    
+    while ($row = mysqli_fetch_assoc($result)) {
+        $total_pertanyaan[$row['id_kecerdasan']] = $row['total'];
+    }
+    
+    return $total_pertanyaan;
+}
+
+$total_pertanyaan_per_kecerdasan = hitungTotalPertanyaanPerKecerdasan();
+
+// Tambahkan informasi persentase kecocokan ke hasil konsultasi
+foreach ($semua_hasil as &$hasil) {
+    $id_kecerdasan = $hasil['id_kecerdasan'];
+    $skor = $hasil['skor'];
+    
+    // Hitung persentase kecocokan
+    $total_pertanyaan = isset($total_pertanyaan_per_kecerdasan[$id_kecerdasan]) ? 
+                        $total_pertanyaan_per_kecerdasan[$id_kecerdasan] : 1; // Hindari pembagian dengan nol
+    $hasil['persentase_kecocokan'] = round(($skor / $total_pertanyaan) * 100);
+    
+    // Tentukan level kecocokan berdasarkan persentase
+    if ($hasil['persentase_kecocokan'] >= 80) {
+        $hasil['level_kecocokan'] = 'Sangat Tinggi';
+    } elseif ($hasil['persentase_kecocokan'] >= 60) {
+        $hasil['level_kecocokan'] = 'Tinggi';
+    } elseif ($hasil['persentase_kecocokan'] >= 40) {
+        $hasil['level_kecocokan'] = 'Sedang';
+    } elseif ($hasil['persentase_kecocokan'] >= 20) {
+        $hasil['level_kecocokan'] = 'Rendah';
+    } else {
+        $hasil['level_kecocokan'] = 'Sangat Rendah';
+    }
+}
+unset($hasil); // Lepaskan referensi
+
 include 'includes/header.php';
 ?>
 
-<div class="container-fluid px-2 px-md-3 py-2">
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Data Hasil Konsultasi</h4>
-                        <div>
-                            <a href="konsultasi.php" class="btn btn-light btn-sm">
-                                <i class="fas fa-plus me-1"></i>Konsultasi Baru
-                            </a>
-                        </div>
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <!-- Header Section -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Data Hasil Konsultasi</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+                Lihat hasil konsultasi pemilihan jurusan berdasarkan minat dan kemampuan siswa.
+            </p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <!-- Total Konsultasi -->
+            <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users text-primary text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm text-gray-600">Total Konsultasi</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900"><?php echo count($semua_hasil); ?></h3>
                     </div>
                 </div>
-                
-                <div class="card-body p-0">
-                    <!-- Stats Summary -->
-                    <div class="bg-light p-3 border-bottom">
-                        <div class="row g-3">
-                            <div class="col-12 col-md-3">
-                                <div class="card bg-primary text-white">
-                                    <div class="card-body p-3">
-                                        <h6 class="mb-1">Total Konsultasi</h6>
-                                        <h3 class="mb-0"><?php echo count($semua_hasil); ?></h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <div class="card bg-success text-white">
-                                    <div class="card-body p-3">
-                                        <h6 class="mb-1">Rekomendasi SMA</h6>
-                                        <h3 class="mb-0"><?php echo count(array_filter($semua_hasil, function($h) { return $h['jenis_sekolah'] == 'SMA'; })); ?></h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <div class="card bg-info text-white">
-                                    <div class="card-body p-3">
-                                        <h6 class="mb-1">Rekomendasi SMK</h6>
-                                        <h3 class="mb-0"><?php echo count(array_filter($semua_hasil, function($h) { return $h['jenis_sekolah'] == 'SMK'; })); ?></h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <div class="card bg-warning text-dark">
-                                    <div class="card-body p-3">
-                                        <h6 class="mb-1">Konsultasi Hari Ini</h6>
-                                        <h3 class="mb-0"><?php echo count(array_filter($semua_hasil, function($h) { return date('Y-m-d', strtotime($h['tanggal'])) == date('Y-m-d'); })); ?></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            </div>
 
-                    <!-- Filter Section -->
-                    <div class="p-3 border-bottom">
-                        <div class="row g-2">
-                            <div class="col-12 col-md-3">
-                                <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Cari nama/NISN...">
-                            </div>
-                            <div class="col-12 col-md-3">
-                            <select class="form-select form-select-sm" id="filterSekolah" onchange="window.location.href='hasiloutput.php?jenis_sekolah=' + this.value">
-                                <option value="">Semua Jenis Sekolah</option>
-                                <option value="SMA" <?php echo ($jenis_sekolah == 'SMA') ? 'selected' : ''; ?>>SMA</option>
-                                <option value="SMK" <?php echo ($jenis_sekolah == 'SMK') ? 'selected' : ''; ?>>SMK</option>
-                            </select>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <select class="form-select form-select-sm" id="sortBy">
-                                    <option value="date_desc">Tanggal Terbaru</option>
-                                    <option value="date_asc">Tanggal Terlama</option>
-                                    <option value="name_asc">Nama A-Z</option>
-                                    <option value="name_desc">Nama Z-A</option>
-                                </select>
-                            </div>
-                        </div>
+            <!-- Rekomendasi SMA -->
+            <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-school text-green-600 text-lg sm:text-xl"></i>
                     </div>
-
-                    <!-- Results Table -->
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped align-middle mb-0" id="resultsTable">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="text-center" style="width: 50px">#</th>
-                                    <th class="text-center" style="width: 120px">Tanggal</th>
-                                    <th>Nama Siswa</th>
-                                    <th class="text-center">NISN</th>
-                                    <th>Sekolah</th>
-                                    <th>Kelas</th>
-                                    <th>Rekomendasi</th>
-                                    <th class="text-center" style="width: 100px">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($semua_hasil as $index => $h): ?>
-                                <tr>
-                                    <td class="text-center"><?php echo $index + 1; ?></td>
-                                    <td class="text-center small">
-                                        <div><?php echo date('d/m/Y', strtotime($h['tanggal'])); ?></div>
-                                        <small class="text-muted"><?php echo date('H:i', strtotime($h['tanggal'])); ?></small>
-                                    </td>
-                                    <td>
-                                        <div class="fw-bold"><?php echo $h['nama_lengkap']; ?></div>
-                                    </td>
-                                    <td class="text-center"><?php echo $h['nisn']; ?></td>
-                                    <td><?php echo $h['sekolah']; ?></td>
-                                    <td><?php echo $h['kelas']; ?></td>
-                                    <td>
-                                        <div class="d-flex flex-column gap-1">
-                                            <span class="badge bg-primary"><?php echo $h['nama_jurusan']; ?></span>
-                                            <span class="badge bg-secondary"><?php echo $h['jenis_sekolah']; ?></span>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="hasil.php?id=<?php echo $h['id_siswa']; ?>" class="btn btn-info" title="Lihat Detail">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-primary" title="Cetak Hasil" onclick="printHasil(<?php echo $h['id_siswa']; ?>)">
-                                                <i class="fas fa-print"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-danger" title="Hapus Data" onclick="deleteHasil(<?php echo $h['id_siswa']; ?>, '<?php echo addslashes($h['nama_lengkap']); ?>')">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                    <div>
+                        <p class="text-xs sm:text-sm text-gray-600">Rekomendasi SMA</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900">
+                            <?php echo count(array_filter($semua_hasil, function($h) { return $h['jenis_sekolah'] == 'SMA'; })); ?>
+                        </h3>
                     </div>
-
-                    <?php if (empty($semua_hasil)): ?>
-                    <div class="text-center p-4">
-                        <div class="text-muted mb-3">
-                            <i class="fas fa-inbox fa-3x"></i>
-                        </div>
-                        <h5>Belum Ada Data</h5>
-                        <p class="mb-0">Belum ada hasil konsultasi yang tersimpan.</p>
-                        <div class="mt-3">
-                            <a href="konsultasi.php" class="btn btn-primary">
-                                <i class="fas fa-plus me-1"></i>Mulai Konsultasi
-                            </a>
-                        </div>
-                    </div>
-                    <?php endif; ?>
                 </div>
+            </div>
+
+            <!-- Rekomendasi SMK -->
+            <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-tools text-blue-600 text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm text-gray-600">Rekomendasi SMK</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900">
+                            <?php echo count(array_filter($semua_hasil, function($h) { return $h['jenis_sekolah'] == 'SMK'; })); ?>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konsultasi Hari Ini -->
+            <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-calendar-day text-yellow-600 text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm text-gray-600">Konsultasi Hari Ini</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900">
+                            <?php echo count(array_filter($semua_hasil, function($h) { return date('Y-m-d', strtotime($h['tanggal'])) == date('Y-m-d'); })); ?>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Search -->
+                <div>
+                    <input type="text" id="searchInput" placeholder="Cari nama/NISN..." 
+                        class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 text-sm">
+                </div>
+                <!-- Filter Sekolah -->
+                <div>
+                    <select id="filterSekolah" onchange="window.location.href='hasiloutput.php?jenis_sekolah=' + this.value"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 text-sm">
+                        <option value="">Semua Jenis Sekolah</option>
+                        <option value="SMA" <?php echo ($jenis_sekolah == 'SMA') ? 'selected' : ''; ?>>SMA</option>
+                        <option value="SMK" <?php echo ($jenis_sekolah == 'SMK') ? 'selected' : ''; ?>>SMK</option>
+                    </select>
+                </div>
+                <!-- Sort -->
+                <div>
+                    <select id="sortBy"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 text-sm">
+                        <option value="date_desc">Tanggal Terbaru</option>
+                        <option value="date_asc">Tanggal Terlama</option>
+                        <option value="name_asc">Nama A-Z</option>
+                        <option value="name_desc">Nama Z-A</option>
+                        <option value="accuracy_desc">Akurasi Tertinggi</option>
+                        <option value="accuracy_asc">Akurasi Terendah</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="resultsTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                            <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                            <th class="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NISN</th>
+                            <th class="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sekolah</th>
+                            <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Kecerdasan</th>
+                            <th class="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kecocokan</th>
+                            <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Akurasi</th>
+                            <th class="px-3 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <?php if (count($semua_hasil) > 0): ?>
+                            <?php $no = 1; foreach ($semua_hasil as $hasil): ?>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500"><?php echo $no++; ?></td>
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
+                                    <?php echo date('d/m/Y', strtotime($hasil['tanggal'])); ?>
+                                </td>
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                    <div class="text-xs sm:text-sm font-medium text-gray-900"><?php echo $hasil['nama_lengkap']; ?></div>
+                                </td>
+                                <td class="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
+                                    <?php echo $hasil['nisn']; ?>
+                                </td>
+                                <td class="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
+                                    <?php echo $hasil['sekolah']; ?>
+                                </td>
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                                    <div class="text-gray-900"><?php echo $hasil['nama_kecerdasan']; ?></div>
+                                </td>
+                                <td class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                        <?php 
+                                        $kecocokan_class = '';
+                                        if ($hasil['level_kecocokan'] == 'Sangat Tinggi') {
+                                            $kecocokan_class = 'bg-green-100 text-green-800';
+                                        } elseif ($hasil['level_kecocokan'] == 'Tinggi') {
+                                            $kecocokan_class = 'bg-blue-100 text-blue-800';
+                                        } elseif ($hasil['level_kecocokan'] == 'Sedang') {
+                                            $kecocokan_class = 'bg-yellow-100 text-yellow-800';
+                                        } elseif ($hasil['level_kecocokan'] == 'Rendah') {
+                                            $kecocokan_class = 'bg-orange-100 text-orange-800';
+                                        } else {
+                                            $kecocokan_class = 'bg-red-100 text-red-800';
+                                        }
+                                        echo $kecocokan_class;
+                                        ?>"
+                                    >
+                                        <?php echo $hasil['level_kecocokan']; ?>
+                                    </span>
+                                </td>
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="h-2.5 rounded-full <?php echo $kecocokan_class; ?>" style="width: <?php echo $hasil['persentase_kecocokan']; ?>%"></div>
+                                    </div>
+                                    <div class="text-xs text-center mt-1"><?php echo $hasil['persentase_kecocokan']; ?>%</div>
+                                </td>
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
+                                    <div class="flex justify-center space-x-1 sm:space-x-2">
+                                        <a href="hasil.php?id=<?php echo $hasil['id_siswa']; ?>" 
+                                            class="text-primary hover:text-secondary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="cetak_hasil.php?id=<?php echo $hasil['id_siswa']; ?>" target="_blank"
+                                            class="text-green-600 hover:text-green-700">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                        <a href="delete_hasil.php?id=<?php echo $hasil['id_siswa']; ?>" 
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')"
+                                            class="text-red-600 hover:text-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="9" class="px-3 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm text-gray-500">
+                                    Tidak ada data hasil konsultasi
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript for filtering and sorting -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
-    const filterSekolah = document.getElementById('filterSekolah');
     const sortBy = document.getElementById('sortBy');
-    const resultsTable = document.getElementById('resultsTable');
-    const tbody = resultsTable.querySelector('tbody');
-
-    function filterAndSortTable() {
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedSekolah = filterSekolah.value;
-
-        // Filter rows
-        const filteredRows = rows.filter(row => {
-            const nama = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-            const nisn = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
-            const jenisSekolah = row.querySelector('td:nth-child(7)').textContent;
+    const table = document.getElementById('resultsTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        rows.forEach(row => {
+            const nama = row.cells[2]?.textContent.toLowerCase() || '';
+            const nisn = row.cells[3]?.textContent.toLowerCase() || '';
             
-            const matchesSearch = nama.includes(searchTerm) || nisn.includes(searchTerm);
-            const matchesSekolah = !selectedSekolah || jenisSekolah.includes(selectedSekolah);
-            
-            return matchesSearch && matchesSekolah;
-        });
-
-        // Sort rows
-        filteredRows.sort((a, b) => {
-            const getValue = (row, selector) => row.querySelector(selector).textContent;
-            
-            switch(sortBy.value) {
-                case 'date_desc':
-                    return new Date(getValue(b, 'td:nth-child(2)')) - new Date(getValue(a, 'td:nth-child(2)'));
-                case 'date_asc':
-                    return new Date(getValue(a, 'td:nth-child(2)')) - new Date(getValue(b, 'td:nth-child(2)'));
-                case 'name_asc':
-                    return getValue(a, 'td:nth-child(3)').localeCompare(getValue(b, 'td:nth-child(3)'));
-                case 'name_desc':
-                    return getValue(b, 'td:nth-child(3)').localeCompare(getValue(a, 'td:nth-child(3)'));
+            if (nama.includes(searchTerm) || nisn.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
             }
         });
-
-        // Update table
-        tbody.innerHTML = '';
-        filteredRows.forEach((row, index) => {
-            row.querySelector('td:first-child').textContent = index + 1;
+    });
+    
+    // Sort functionality
+    sortBy.addEventListener('change', function() {
+        const sortValue = this.value;
+        
+        rows.sort((a, b) => {
+            let valueA, valueB;
+            
+            if (sortValue === 'date_desc' || sortValue === 'date_asc') {
+                const dateA = a.cells[1].textContent.split('/');
+                const dateB = b.cells[1].textContent.split('/');
+                
+                valueA = new Date(dateA[2], dateA[1] - 1, dateA[0]);
+                valueB = new Date(dateB[2], dateB[1] - 1, dateB[0]);
+                
+                return sortValue === 'date_desc' ? valueB - valueA : valueA - valueB;
+            } else if (sortValue === 'name_asc' || sortValue === 'name_desc') {
+                valueA = a.cells[2].textContent.toLowerCase();
+                valueB = b.cells[2].textContent.toLowerCase();
+                
+                return sortValue === 'name_desc' ? 
+                    valueB.localeCompare(valueA) : 
+                    valueA.localeCompare(valueB);
+            } else if (sortValue === 'accuracy_desc' || sortValue === 'accuracy_asc') {
+                // Ambil nilai persentase dari kolom akurasi
+                valueA = parseInt(a.cells[7].querySelector('.text-xs').textContent);
+                valueB = parseInt(b.cells[7].querySelector('.text-xs').textContent);
+                
+                return sortValue === 'accuracy_desc' ? valueB - valueA : valueA - valueB;
+            }
+        });
+        
+        // Remove existing rows
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+        
+        // Add sorted rows
+        rows.forEach(row => {
             tbody.appendChild(row);
         });
-    }
-
-    // Add event listeners
-    searchInput.addEventListener('input', filterAndSortTable);
-    filterSekolah.addEventListener('change', filterAndSortTable);
-    sortBy.addEventListener('change', filterAndSortTable);
-});
-
-function printHasil(id) {
-    window.open('cetak_hasil.php?id=' + id, '_blank');
-}
-
-function deleteHasil(id, nama) {
-    if (confirm('Apakah Anda yakin ingin menghapus hasil konsultasi untuk siswa ' + nama + '?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'delete_hasil.php';
-        
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'id_siswa';
-        input.value = id;
-        
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-// Show success message if deletion was successful
-<?php if (isset($_GET['deleted'])): ?>
-    document.addEventListener('DOMContentLoaded', function() {
-        alert('Data hasil konsultasi berhasil dihapus');
     });
-<?php endif; ?>
+});
 </script>
+
+<?php include 'includes/footer.php'; ?>
+
+
+<?php
+require_once 'includes/functions.php';
+
+// Cek apakah ada ID siswa
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    header("Location: konsultasi.php");
+    exit;
+}
+
+$id_siswa = (int) $_GET['id'];
+$siswa = getSiswaById($id_siswa);
+
+// Jika siswa tidak ditemukan
+if (!$siswa) {
+    header("Location: konsultasi.php");
+    exit;
+}
+
+// Ambil hasil konsultasi
+$hasil = getHasilKonsultasi($id_siswa);
+
+// Jika hasil tidak ditemukan
+if (!$hasil) {
+    header("Location: konsultasi.php");
+    exit;
+}
+
+// Dapatkan skor kecerdasan
+$skor_kecerdasan = hitungSkorKecerdasan($id_siswa);
+$id_kecerdasan_dominan = getKecerdasanDominan($id_siswa);
+
+// Dapatkan data kecerdasan dominan
+$query = "SELECT * FROM kecerdasan WHERE id_kecerdasan = $id_kecerdasan_dominan";
+$result = mysqli_query($conn, $query);
+$kecerdasan_dominan = mysqli_fetch_assoc($result);
+
+// Dapatkan jurusan yang sesuai dengan kecerdasan dominan
+$jurusan_rekomendasi = getJurusanByKecerdasan($id_kecerdasan_dominan);
+
+include 'includes/header.php';
+?>
+
+<div class="flex flex-col md:flex-row min-h-screen bg-gray-50">
+    <!-- Data Siswa Column -->
+    <div class="w-full md:w-1/4 p-4">
+        <div class="bg-blue-500 text-white p-4 rounded-t-lg">
+            <h2 class="text-xl font-bold">Data Siswa</h2>
+        </div>
+        <div class="bg-white p-4 shadow-md rounded-b-lg">
+            <div class="space-y-2">
+                <p><span class="font-bold">Nama:</span> <?php echo $siswa['nama_lengkap']; ?></p>
+                <p><span class="font-bold">NISN:</span> <?php echo $siswa['nisn']; ?></p>
+                <p><span class="font-bold">Kelas:</span> <?php echo $siswa['kelas']; ?></p>
+                <p><span class="font-bold">Sekolah:</span> <?php echo $siswa['sekolah']; ?></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hasil Konsultasi Column -->
+    <div class="w-full md:w-3/4 p-4">
+        <div class="bg-green-600 text-white p-4 rounded-t-lg">
+            <h2 class="text-xl font-bold text-center">Hasil Konsultasi</h2>
+        </div>
+        <div class="bg-white p-6 shadow-md rounded-b-lg">
+            <!-- Kecerdasan Dominan Section -->
+            <div class="mb-8 text-center">
+                <h3 class="text-lg font-bold mb-2">Kecerdasan Dominan</h3>
+                <div class="text-2xl text-cyan-500 font-bold mb-2"><?php echo $kecerdasan_dominan['nama_kecerdasan']; ?></div>
+                <p class="text-gray-600 mb-4"><?php echo $kecerdasan_dominan['deskripsi']; ?></p>
+            </div>
+
+            <!-- Rekomendasi Jurusan Section -->
+            <div class="mb-8 text-center">
+                <h3 class="text-lg font-bold mb-2">Rekomendasi Jurusan</h3>
+                <div class="text-2xl text-cyan-500 font-bold mb-2"><?php echo $hasil['nama_jurusan']; ?></div>
+                <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs"><?php echo $hasil['jenis_sekolah']; ?></span>
+            </div>
+
+            <!-- Deskripsi dan Prospek Karir -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Deskripsi Jurusan -->
+                <div>
+                    <div class="bg-cyan-500 text-white p-2 rounded-t-lg">
+                        <h4 class="font-bold">Deskripsi Jurusan</h4>
+                    </div>
+                    <div class="border border-gray-200 p-4 rounded-b-lg">
+                        <p><?php echo $hasil['deskripsi']; ?></p>
+                    </div>
+                </div>
+
+                <!-- Prospek Karir -->
+                <div>
+                    <div class="bg-cyan-500 text-white p-2 rounded-t-lg">
+                        <h4 class="font-bold">Prospek Karir</h4>
+                    </div>
+                    <div class="border border-gray-200 p-4 rounded-b-lg">
+                        <p><?php echo $hasil['prospek_karir']; ?></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-2 mt-6">
+                <a href="cetak_hasil.php?id=<?php echo $id_siswa; ?>" class="bg-cyan-500 text-white px-4 py-2 rounded-lg hover:bg-cyan-600 transition duration-200 flex items-center">
+                    <i class="fas fa-print mr-2"></i> Cetak Hasil
+                </a>
+                <a href="konsultasi.php" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200 flex items-center">
+                    <i class="fas fa-sync-alt mr-2"></i> Konsultasi Baru
+                </a>
+                <a href="index.php" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-200 flex items-center">
+                    <i class="fas fa-home mr-2"></i> Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include 'includes/footer.php'; ?>

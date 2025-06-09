@@ -3,8 +3,8 @@
 $conn = null;
 
 try {
-    // Create mysqli connection
-    $conn = mysqli_connect("localhost", "root", "root", "spk_sekolah");
+    // Create mysqli connection - ubah password sesuai dengan konfigurasi MySQL lokal Anda
+    $conn = mysqli_connect("localhost", "root", "", "spk_sekolah");
     
     // Check connection
     if (mysqli_connect_errno()) {
