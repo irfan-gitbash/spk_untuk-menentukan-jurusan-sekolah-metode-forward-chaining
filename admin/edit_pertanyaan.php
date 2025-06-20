@@ -10,39 +10,49 @@ if (!isset($_SESSION['admin_id'])) {
 
 $error = '';
 $success = '';
-$pertanyaan_data = null;
 
-// Get question data
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
-    $query = "SELECT * FROM pertanyaan WHERE id_pertanyaan = $id";
-    $result = mysqli_query($conn, $query);
-    $pertanyaan_data = mysqli_fetch_assoc($result);
+// Get question ID from URL or form submission
+$id = $_GET['id'] ?? $_POST['id'] ?? null;
 
-    if (!$pertanyaan_data) {
-        header("Location: manage_pertanyaan.php");
-        exit;
-    }
+if (!$id) {
+    // If no ID, redirect to the management page
+    header("Location: manage_pertanyaan.php");
+    exit;
 }
+$id = intval($id);
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = intval($_POST['id']);
-    $pertanyaan = trim($_POST['pertanyaan']);
+    $pertanyaan = trim($_POST['pertanyaan'] ?? '');
     
     if (empty($pertanyaan)) {
         $error = "Pertanyaan tidak boleh kosong!";
     } else {
-        $pertanyaan = mysqli_real_escape_string($conn, $pertanyaan);
-        $query = "UPDATE pertanyaan SET pertanyaan = '$pertanyaan' WHERE id_pertanyaan = $id";
+        $pertanyaan_escaped = mysqli_real_escape_string($conn, $pertanyaan);
+        $query = "UPDATE pertanyaan SET pertanyaan = '$pertanyaan_escaped' WHERE id_pertanyaan = $id";
         
         if (mysqli_query($conn, $query)) {
             $success = "Pertanyaan berhasil diperbarui!";
-            $pertanyaan_data['pertanyaan'] = $pertanyaan;
         } else {
             $error = "Gagal memperbarui pertanyaan: " . mysqli_error($conn);
         }
     }
+}
+
+// Always fetch the latest question data from the database
+$query = "SELECT * FROM pertanyaan WHERE id_pertanyaan = $id";
+$result = mysqli_query($conn, $query);
+$pertanyaan_data = mysqli_fetch_assoc($result);
+
+// If the question doesn't exist, redirect
+if (!$pertanyaan_data) {
+    header("Location: manage_pertanyaan.php");
+    exit;
+}
+
+// If there was a validation error on POST, show the user's invalid input
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($error)) {
+    $pertanyaan_data['pertanyaan'] = $_POST['pertanyaan'] ?? '';
 }
 ?>
 <!DOCTYPE html>
@@ -146,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 class="w-full px-4 py-2 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                                 placeholder="Masukkan pertanyaan..."
                                 required
-                            ><?php echo htmlspecialchars($pertanyaan_data['pertanyaan']); ?></textarea>
+                            ><?php echo htmlspecialchars($pertanyaan_data['pertanyaan'] ?? ''); ?></textarea>
                             <p class="mt-2 text-sm text-gray-500">
                                 Pastikan pertanyaan jelas dan mudah dipahami oleh siswa.
                             </p>

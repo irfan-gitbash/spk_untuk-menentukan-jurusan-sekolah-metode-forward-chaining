@@ -99,6 +99,21 @@ while ($row = mysqli_fetch_assoc($result_terbaru)) {
                     <i class="fas fa-question-circle w-5"></i>
                     <span class="ml-3">Kelola Pertanyaan</span>
                 </a>
+                <!-- Menu Baru: Kelola Data Kecerdasan -->
+                <a href="manage_kecerdasan.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-accent hover:text-primary">
+                    <i class="fas fa-brain w-5"></i>
+                    <span class="ml-3">Kelola Kecerdasan</span>
+                </a>
+                <!-- Menu Baru: Kelola Aturan -->
+                <a href="manage_aturan.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-accent hover:text-primary">
+                    <i class="fas fa-cogs w-5"></i>
+                    <span class="ml-3">Kelola Aturan</span>
+                </a>
+                <!-- Menu Baru: Hasil Akhir -->
+                <a href="hasil_akhir.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-accent hover:text-primary">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span class="ml-3">Hasil Akhir</span>
+                </a>
             </nav>
         </div>
 
@@ -235,6 +250,40 @@ while ($row = mysqli_fetch_assoc($result_terbaru)) {
                             </div>
                         </div>
                         <a href="manage_pertanyaan.php" class="mt-4 inline-flex items-center text-primary hover:text-secondary">
+                            <span class="text-sm">Buka Menu</span>
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Card Baru: Kelola Kecerdasan -->
+                    <div class="bg-white rounded-xl p-4 md:p-6 border border-gray-100 hover:shadow-lg transition-shadow">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-brain text-blue-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Kelola Kecerdasan</h3>
+                                <p class="text-sm text-gray-500">Atur data kecerdasan</p>
+                            </div>
+                        </div>
+                        <a href="manage_kecerdasan.php" class="mt-4 inline-flex items-center text-primary hover:text-secondary">
+                            <span class="text-sm">Buka Menu</span>
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Card Baru: Kelola Aturan -->
+                    <div class="bg-white rounded-xl p-4 md:p-6 border border-gray-100 hover:shadow-lg transition-shadow">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-cogs text-yellow-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Kelola Aturan</h3>
+                                <p class="text-sm text-gray-500">Atur aturan forward chaining</p>
+                            </div>
+                        </div>
+                        <a href="manage_aturan.php" class="mt-4 inline-flex items-center text-primary hover:text-secondary">
                             <span class="text-sm">Buka Menu</span>
                             <i class="fas fa-arrow-right ml-2"></i>
                         </a>

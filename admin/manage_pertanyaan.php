@@ -17,6 +17,15 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
+// Handle clear all request
+if (isset($_GET['clear']) && $_GET['clear'] == 'all') {
+    // Truncate the table to delete all questions and reset auto-increment
+    $query = "TRUNCATE TABLE pertanyaan";
+    mysqli_query($conn, $query);
+    header("Location: manage_pertanyaan.php");
+    exit;
+}
+
 // Fetch all questions
 $query = "SELECT * FROM pertanyaan ORDER BY id_pertanyaan DESC";
 $result = mysqli_query($conn, $query);
@@ -79,9 +88,17 @@ while ($row = mysqli_fetch_assoc($result)) {
         <div class="flex-1 overflow-auto p-8">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-semibold text-gray-800">Kelola Pertanyaan</h2>
-                <a href="tambah_pertanyaan.php" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition">
-                    <i class="fas fa-plus mr-2"></i>Tambah Pertanyaan
-                </a>
+                <div class="flex space-x-4">
+                    <a href="cetak_pertanyaan.php" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+                        <i class="fas fa-print mr-2"></i>Cetak
+                    </a>
+                    <a href="manage_pertanyaan.php?clear=all" onclick="return confirm('Anda yakin ingin menghapus semua pertanyaan? Tindakan ini tidak dapat diurungkan.')" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-trash-alt mr-2"></i>Hapus Semua
+                    </a>
+                    <a href="tambah_pertanyaan.php" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition">
+                        <i class="fas fa-plus mr-2"></i>Tambah Pertanyaan
+                    </a>
+                </div>
             </div>
 
             <div class="bg-white rounded-xl shadow p-6">

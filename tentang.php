@@ -105,88 +105,91 @@
                         Berikut adalah visualisasi pohon keputusan yang digunakan dalam sistem pendukung keputusan untuk menentukan jurusan SMA dan SMK menggunakan metode forward chaining.
                     </p>
                     
-                    <!-- Tombol Export PDF -->
-                    <div class="mb-4">
+                    <!-- Tombol Export PDF dan Zoom -->
+                    <div class="mb-4 flex flex-wrap gap-2">
                         <button id="exportPdfBtn" class="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg flex items-center">
                             <i class="fas fa-file-pdf mr-2"></i> Export Pohon Keputusan sebagai PDF
                         </button>
+                        <div class="flex items-center space-x-2">
+                            <button id="zoomInBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-lg">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                            <button id="zoomOutBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-lg">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <button id="resetZoomBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-3 rounded-lg">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
                     </div>
                     
-                    <!-- Mermaid Diagram -->
-                    <div id="mermaidDiagram" class="mermaid overflow-auto" style="background-color: white;">
-                        graph TD
-                            A[Start] --> B[Input Data Siswa]
-                            B --> C[Jawab Pertanyaan]
-                            C --> D{Proses Forward Chaining}
-                            
-                            %% Proses Forward Chaining
-                            D --> E[Hitung Skor Kecerdasan]
-                            E --> F[Tentukan Kecerdasan Dominan]
-                            F --> G[Cari Jurusan Terkait]
-                            
-                            %% Kecerdasan dan Jurusan Terkait
-                            G --> K1{Kecerdasan Linguistic-Verbal}
-                            G --> K2{Kecerdasan Logika-Matematika}
-                            G --> K3{Kecerdasan Spasial-Visual}
-                            G --> K4{Kecerdasan Kinetik}
-                            G --> K5{Kecerdasan Ritmik-Musik}
-                            G --> K6{Kecerdasan Interpersonal}
-                            G --> K7{Kecerdasan Intrapersonal}
-                            G --> K8{Kecerdasan Naturalis}
-                            G --> K9{Kecerdasan Eksistensial}
-                            
-                            %% Jurusan SMA dan SMK untuk K1
-                            K1 --> K1_SMA[SMA: IPS, Bahasa]
-                            K1 --> K1_SMK[SMK: Administrasi Perkantoran, Perhotelan, Pemasaran]
-                            
-                            %% Jurusan SMA dan SMK untuk K2
-                            K2 --> K2_SMA[SMA: IPA]
-                            K2 --> K2_SMK[SMK: Akuntansi, Farmasi, TKJ, Otomotif]
-                            
-                            %% Jurusan SMA dan SMK untuk K3
-                            K3 --> K3_SMK[SMK: DKV, Multimedia, Tata Rias, Tata Busana]
-                            
-                            %% Jurusan SMA dan SMK untuk K4
-                            K4 --> K4_SMK[SMK: Teknik Mesin, Tata Boga, Pelayaran, Otomotif]
-                            
-                            %% Jurusan SMA dan SMK untuk K5
-                            K5 --> K5_SMK[SMK: Multimedia, Tata Rias, Perhotelan]
-                            
-                            %% Jurusan SMA dan SMK untuk K6
-                            K6 --> K6_SMA[SMA: IPS]
-                            K6 --> K6_SMK[SMK: Keperawatan, Administrasi Perkantoran, Perhotelan, Pemasaran]
-                            
-                            %% Jurusan SMA dan SMK untuk K7
-                            K7 --> K7_SMA[SMA: IPA, IPS]
-                            K7 --> K7_SMK[SMK: Keperawatan, Farmasi]
-                            
-                            %% Jurusan SMA dan SMK untuk K8
-                            K8 --> K8_SMA[SMA: IPA]
-                            K8 --> K8_SMK[SMK: Keperawatan, Farmasi, Tata Boga]
-                            
-                            %% Jurusan SMA dan SMK untuk K9
-                            K9 --> K9_SMA[SMA: IPS, Bahasa]
-                            K9 --> K9_SMK[SMK: Administrasi Perkantoran, TKJ, Tata Rias]
-                            
-                            %% Hasil Akhir
-                            K1_SMA --> H[Hasil Rekomendasi Jurusan]
-                            K1_SMK --> H
-                            K2_SMA --> H
-                            K2_SMK --> H
-                            K3_SMK --> H
-                            K4_SMK --> H
-                            K5_SMK --> H
-                            K6_SMA --> H
-                            K6_SMK --> H
-                            K7_SMA --> H
-                            K7_SMK --> H
-                            K8_SMA --> H
-                            K8_SMK --> H
-                            K9_SMA --> H
-                            K9_SMK --> H
-                            
-                            H --> I[Tampilkan Hasil]
-                            I --> J[Selesai]
+                    <!-- Mermaid Diagram Container -->
+                    <div id="mermaidContainer" class="overflow-auto border rounded-lg p-4 bg-white" style="height: 60vh;">
+                        <div id="mermaidDiagram" class="mermaid">
+                            graph TD
+                                Kecerdasan
+                                Kecerdasan --> C1
+                                C1 --> C2
+                            C2 --> C3
+                            C3 --> C4
+                            C4 --> C5
+                            C5 --> K1
+
+                            Kecerdasan --> C6
+                            C6 --> C7
+                            C7 --> C8
+                            C8 --> C9
+                            C9 --> C10
+                            C10 --> K2
+
+                            Kecerdasan --> C11
+                            C11 --> C12
+                            C12 --> C13
+                            C13 --> C14
+                            C14 --> C15
+                            C15 --> K3
+
+                            Kecerdasan --> C16
+                            C16 --> C17
+                            C17 --> C18
+                            C18 --> C19
+                            C19 --> C20
+                            C20 --> K4
+
+                            Kecerdasan --> C21
+                            C21 --> C22
+                            C22 --> C23
+                            C23 --> C24
+                            C24 --> C25
+                            C25 --> K5
+
+                            Kecerdasan --> C26
+                            C26 --> C27
+                            C27 --> C28
+                            C28 --> C29
+                            C29 --> C30
+                            C30 --> K6
+
+                            Kecerdasan --> C31
+                            C31 --> C32
+                            C32 --> C33
+                            C33 --> C34
+                            C34 --> C35
+                            C35 --> K7
+
+                            Kecerdasan --> C36
+                            C36 --> C37
+                            C37 --> C38
+                            C38 --> C39
+                            C39 --> C40
+                            C40 --> K8
+
+                            Kecerdasan --> C41
+                            C41 --> C42
+                            C42 --> C43
+                            C43 --> C44
+                            C44 --> C45
+                            C45 --> K9
                     </div>
                 </div>
             </div>
@@ -211,20 +214,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Inisialisasi Mermaid dengan ukuran yang lebih kecil
+        // Inisialisasi Mermaid dengan konfigurasi yang lebih ringkas
         mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
             securityLevel: 'loose',
             flowchart: {
-                useMaxWidth: true,
+                useMaxWidth: false, // Set false agar bisa di-zoom
                 htmlLabels: true,
-                curve: 'basis',
-                nodeSpacing: 20,  // Mengurangi jarak antar node
-                rankSpacing: 30,  // Mengurangi jarak antar level
-                fontSize: 11      // Mengurangi ukuran font
+                curve: 'linear',
+                nodeSpacing: 40,    // Jarak antar node
+                rankSpacing: 60     // Jarak antar level
             },
-            fontSize: 11,         // Ukuran font global lebih kecil
+            fontFamily: '"Inter", sans-serif',
+            fontSize: 12 // Ukuran font diperbesar dari 14 ke 16
+        });
+
+        const mermaidContainer = document.getElementById('mermaidContainer');
+        const mermaidDiagram = document.getElementById('mermaidDiagram');
+        let currentZoom = 1.0;
+        const zoomStep = 0.1;
+
+        function applyZoom() {
+            mermaidDiagram.style.transform = `scale(${currentZoom})`;
+            mermaidDiagram.style.transformOrigin = 'top left';
+        }
+
+        document.getElementById('zoomInBtn').addEventListener('click', () => {
+            currentZoom += zoomStep;
+            applyZoom();
+        });
+
+        document.getElementById('zoomOutBtn').addEventListener('click', () => {
+            if (currentZoom > zoomStep) {
+                currentZoom -= zoomStep;
+                applyZoom();
+            }
+        });
+
+        document.getElementById('resetZoomBtn').addEventListener('click', () => {
+            currentZoom = 1.0;
+            applyZoom();
         });
         
         // Fungsi untuk export PDF
@@ -234,34 +264,64 @@
             loadingMsg.innerHTML = '<div class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50"><div class="bg-white p-4 rounded-lg"><i class="fas fa-spinner fa-spin mr-2"></i>Sedang membuat PDF...</div></div>';
             document.body.appendChild(loadingMsg);
             
+            // Reset zoom dan transformasi sebelum mengambil gambar
+            const mermaidDiv = document.getElementById('mermaidDiagram');
+            const originalTransform = mermaidDiv.style.transform;
+            const originalTransformOrigin = mermaidDiv.style.transformOrigin;
+            mermaidDiv.style.transform = 'scale(1)';
+            mermaidDiv.style.transformOrigin = 'top left';
+            
             // Berikan waktu untuk rendering diagram
             setTimeout(function() {
                 const { jsPDF } = window.jspdf;
-                const diagram = document.getElementById('mermaidDiagram');
                 
-                html2canvas(diagram, {
-                    scale: 2, // Meningkatkan kualitas gambar
-                    backgroundColor: '#ffffff'
-                }).then(function(canvas) {
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape orientation
+                // Pastikan diagram terlihat penuh dengan menyesuaikan ukuran container
+                const svgElement = mermaidDiv.querySelector('svg');
+                if (svgElement) {
+                    // Simpan ukuran asli
+                    const originalWidth = svgElement.style.minWidth;
+                    const originalHeight = svgElement.getAttribute('height');
+                    const originalFontSize = svgElement.style.fontSize;
                     
-                    // Ukuran halaman A4 landscape
+                    // Sesuaikan untuk ekspor
+                    svgElement.style.minWidth = '2000px';
+                    svgElement.setAttribute('width', '2000px');
+                    svgElement.setAttribute('height', '2000px');
+                    svgElement.style.fontSize = '28px';
+                }
+                
+                html2canvas(mermaidDiv, {
+                    scale: 5, // Meningkatkan kualitas gambar (dari 4)
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    logging: true,
+                    allowTaint: true,
+                    width: mermaidDiv.scrollWidth, // Gunakan lebar penuh
+                    height: mermaidDiv.scrollHeight, // Gunakan tinggi penuh
+                    windowWidth: 2000, // Lebar jendela virtual lebih besar
+                    windowHeight: 2000 // Tinggi jendela virtual lebih besar
+                }).then(function(canvas) {
+                    const imgData = canvas.toDataURL('image/png', 1.0); // Kualitas maksimum
+                    
+                    // Gunakan ukuran A2 untuk PDF yang lebih besar
+                    const pdf = new jsPDF('l', 'mm', 'a2'); // Landscape orientation, A2 size
+                    
+                    // Ukuran halaman A2 landscape
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = pdf.internal.pageSize.getHeight();
                     
                     // Menghitung rasio untuk memastikan diagram muat di halaman
                     const imgWidth = canvas.width;
                     const imgHeight = canvas.height;
-                    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.9;
+                    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95; // Sedikit margin
                     
                     // Menambahkan judul
-                    pdf.setFontSize(16);
+                    pdf.setFontSize(24); // Font judul
                     pdf.text('Pohon Keputusan Forward Chaining', pdfWidth/2, 15, { align: 'center' });
-                    pdf.setFontSize(12);
-                    pdf.text('Sistem Pendukung Keputusan Pemilihan Jurusan SMA dan SMK', pdfWidth/2, 22, { align: 'center' });
+                    pdf.setFontSize(18); // Font subjudul
+                    pdf.text('Sistem Pendukung Keputusan Pemilihan Jurusan SMA dan SMK', pdfWidth/2, 25, { align: 'center' });
                     
-                    // Menambahkan gambar diagram
+                    // Menambahkan gambar diagram dengan posisi yang disesuaikan
                     pdf.addImage(
                         imgData, 
                         'PNG', 
@@ -274,16 +334,27 @@
                     // Menambahkan footer
                     const today = new Date();
                     const dateStr = today.toLocaleDateString('id-ID');
-                    pdf.setFontSize(10);
+                    pdf.setFontSize(14); // Font footer
                     pdf.text('Dicetak pada: ' + dateStr, pdfWidth - 20, pdfHeight - 10, { align: 'right' });
                     
-                    // Simpan PDF
-                    pdf.save('Pohon_Keputusan_Forward_Chaining.pdf');
+                    // Simpan PDF dengan nama yang lebih deskriptif
+                    pdf.save('Pohon_Keputusan_Forward_Chaining_' + dateStr.replace(/\//g, '-') + '.pdf');
+                    
+                    // Kembalikan ukuran asli jika ada perubahan
+                    if (svgElement) {
+                        svgElement.style.minWidth = originalWidth;
+                        svgElement.setAttribute('height', originalHeight);
+                        svgElement.style.fontSize = originalFontSize;
+                    }
+                    
+                    // Kembalikan transformasi asli
+                    mermaidDiv.style.transform = originalTransform;
+                    mermaidDiv.style.transformOrigin = originalTransformOrigin;
                     
                     // Hapus pesan loading
                     document.body.removeChild(loadingMsg);
                 });
-            }, 1000);
+            }, 3000); // Berikan waktu lebih lama untuk rendering (dari 2000)
         });
     });
 </script>

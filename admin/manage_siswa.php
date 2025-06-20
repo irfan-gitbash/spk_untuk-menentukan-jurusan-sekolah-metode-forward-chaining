@@ -11,6 +11,27 @@ if (!isset($_SESSION['admin_id'])) {
 $success = '';
 $error = '';
 
+// Proses hapus data konsultasi (clear)
+if (isset($_GET['clear'])) {
+    $id_siswa = (int) $_GET['clear'];
+    
+    // Hapus data terkait di tabel jawaban_siswa
+    $query_delete_jawaban = "DELETE FROM jawaban_siswa WHERE id_siswa = $id_siswa";
+    mysqli_query($conn, $query_delete_jawaban);
+    
+    // Hapus data terkait di tabel hasil_konsultasi
+    $query_delete_hasil = "DELETE FROM hasil_konsultasi WHERE id_siswa = $id_siswa";
+    mysqli_query($conn, $query_delete_hasil);
+
+    // Set tanggal_konsultasi menjadi NULL di tabel siswa
+    $query_update_siswa = "UPDATE siswa SET tanggal_konsultasi = NULL WHERE id_siswa = $id_siswa";
+    if (mysqli_query($conn, $query_update_siswa)) {
+        $success = "Data konsultasi siswa berhasil dibersihkan!";
+    } else {
+        $error = "Gagal membersihkan data konsultasi siswa: " . mysqli_error($conn);
+    }
+}
+
 // Proses hapus siswa
 if (isset($_GET['delete'])) {
     $id_siswa = (int) $_GET['delete'];
@@ -203,11 +224,17 @@ while ($row = mysqli_fetch_assoc($result)) {
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex space-x-2">
+                                        <a href="../cetak_hasil.php?id=<?php echo $s['id_siswa']; ?>" target="_blank" class="text-blue-500 hover:text-blue-600" title="Cetak Hasil">
+                                            <i class="fas fa-print"></i>
+                                        </a>
                                         <a href="../hasil.php?id=<?php echo $s['id_siswa']; ?>" class="text-primary hover:text-secondary" title="Lihat Hasil">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="edit_siswa.php?id=<?php echo $s['id_siswa']; ?>" class="text-yellow-500 hover:text-yellow-600" title="Edit">
                                             <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" onclick="confirmClear(<?php echo $s['id_siswa']; ?>)" class="text-gray-500 hover:text-gray-600" title="Clear Hasil">
+                                            <i class="fas fa-eraser"></i>
                                         </a>
                                         <a href="#" onclick="confirmDelete(<?php echo $s['id_siswa']; ?>)" class="text-red-500 hover:text-red-600" title="Hapus">
                                             <i class="fas fa-trash-alt"></i>
@@ -281,8 +308,15 @@ while ($row = mysqli_fetch_assoc($result)) {
         
         // Confirm delete
         function confirmDelete(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
+            if (confirm('Apakah Anda yakin ingin menghapus data siswa ini? Semua data terkait akan hilang permanen.')) {
                 window.location.href = `?delete=${id}`;
+            }
+        }
+
+        // Confirm clear
+        function confirmClear(id) {
+            if (confirm('Apakah Anda yakin ingin membersihkan data hasil konsultasi siswa ini? Data siswa akan tetap ada.')) {
+                window.location.href = `?clear=${id}`;
             }
         }
     </script>

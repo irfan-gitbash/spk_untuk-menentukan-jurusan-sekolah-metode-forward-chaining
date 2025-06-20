@@ -1,0 +1,82 @@
+graph TD
+    %% Aktor
+    Admin((Admin))
+    SiswaSiswa((Siswa/Siswa))
+    
+    %% Use Cases Autentikasi
+    Login[Login]
+    Logout[Logout]
+    
+    %% Use Cases Kelola Siswa
+    KelolaSiswa[Kelola Data Siswa]
+    LihatSiswa[Lihat Data Siswa]
+    HapusSiswa[Hapus Data Siswa]
+    LihatRekomendasi[Lihat Rekomendasi Jurusan Siswa]
+    
+    %% Use Cases Kelola Jurusan
+    KelolaJurusan[Kelola Data Jurusan]
+    LihatJurusan[Lihat Data Jurusan]
+    TambahJurusan[Tambah Jurusan]
+    EditJurusan[Edit Jurusan]
+    HapusJurusan[Hapus Jurusan]
+    
+    %% Use Cases Kelola Pertanyaan
+    KelolaPertanyaan[Kelola Pertanyaan]
+    LihatPertanyaan[Lihat Pertanyaan]
+    TambahPertanyaan[Tambah Pertanyaan]
+    EditPertanyaan[Edit Pertanyaan]
+    HapusPertanyaan[Hapus Pertanyaan]
+    
+    %% Use Cases Kelola Admin
+    KelolaAdmin[Kelola Admin]
+    LihatAdmin[Lihat Admin]
+    TambahAdmin[Tambah Admin]
+    HapusAdmin[Hapus Admin]
+    
+    %% Use Cases Dashboard
+    LihatDashboard[Lihat Dashboard]
+    LihatTotalSiswa[Lihat Total Siswa]
+    LihatTotalKonsultasi[Lihat Total Konsultasi]
+    LihatStatistikSekolah[Lihat Statistik Jenis Sekolah]
+    LihatKonsultasiTerbaru[Lihat Konsultasi Terbaru]
+    
+    %% Relasi Admin dengan Use Cases
+    Admin -->|Melakukan| Login
+    Admin -->|Melakukan| Logout
+    Admin -->|Mengakses| KelolaSiswa
+    Admin -->|Mengakses| KelolaJurusan
+    Admin -->|Mengakses| KelolaPertanyaan
+    Admin -->|Mengakses| KelolaAdmin
+    Admin -->|Mengakses| LihatDashboard
+    
+    %% Relasi Kelola Siswa
+    KelolaSiswa -->|<<include>>| LihatSiswa
+    KelolaSiswa -->|<<include>>| HapusSiswa
+    KelolaSiswa -->|<<include>>| LihatRekomendasi
+    
+    %% Relasi Kelola Jurusan
+    KelolaJurusan -->|<<include>>| LihatJurusan
+    KelolaJurusan -->|<<include>>| TambahJurusan
+    KelolaJurusan -->|<<include>>| EditJurusan
+    KelolaJurusan -->|<<include>>| HapusJurusan
+    
+    %% Relasi Kelola Pertanyaan
+    KelolaPertanyaan -->|<<include>>| LihatPertanyaan
+    KelolaPertanyaan -->|<<include>>| TambahPertanyaan
+    KelolaPertanyaan -->|<<include>>| EditPertanyaan
+    KelolaPertanyaan -->|<<include>>| HapusPertanyaan
+    
+    %% Relasi Kelola Admin
+    KelolaAdmin -->|<<include>>| LihatAdmin
+    KelolaAdmin -->|<<include>>| TambahAdmin
+    KelolaAdmin -->|<<include>>| HapusAdmin
+    
+    %% Relasi Dashboard
+    LihatDashboard -->|<<include>>| LihatTotalSiswa
+    LihatDashboard -->|<<include>>| LihatTotalKonsultasi
+    LihatDashboard -->|<<include>>| LihatStatistikSekolah
+    LihatDashboard -->|<<include>>| LihatKonsultasiTerbaru
+    
+    %% Relasi Siswa dengan Admin
+    SiswaSiswa -->|<<extends>>| LihatRekomendasi
+    SiswaSiswa -->|<<extends>>| LihatKonsultasiTerbaru
